@@ -49,19 +49,19 @@ def run(_run, _config, _log):
     time.sleep(300) # To let sacred fileobserver write everything
 
     # Clean up after finishing
-    print("Exiting Main")
+    logger.console_logger.info("Exiting Main")
 
-    print("Stopping all threads")
+    logger.console_logger.info("Stopping all threads")
     for t in threading.enumerate():
         if t.name != "MainThread":
-            print("Thread {} is alive! Is daemon: {}".format(t.name, t.daemon))
+            logger.console_logger.info("Thread {} is alive! Is daemon: {}".format(t.name, t.daemon))
             t.join(timeout=1)
-            print("Thread joined")
+            logger.console_logger.info("Thread joined")
 
-    print("Exiting script")
+    logger.console_logger.info("Exiting script")
 
     # Making sure framework really exits
-    os._exit(os.EX_OK)
+    os._exit(getattr(os, "EX_OK", 0))
 
 
 def evaluate_sequential(args, runner):
@@ -93,7 +93,7 @@ def run_sequential(args, logger):
         "reward": {"vshape": (1,)},
         "terminated": {"vshape": (1,), "dtype": th.uint8},
     }
-    print(scheme)
+    # print(scheme)
 
     if args.mac == "is_mac":
         scheme["behavior"] = {"vshape": (env_info["n_actions"],),
@@ -169,8 +169,8 @@ def run_sequential(args, logger):
 
     logger.console_logger.info(
         "Beginning training for {} timesteps".format(args.t_max))
-    print("start")
-    print("Number of trainable param=", learner.n_learnable_param())
+    # print("start")
+    # print("Number of trainable param=", learner.n_learnable_param())
     while runner.t_env <= args.t_max:
 
         # Run for a whole episode at a time
@@ -239,7 +239,7 @@ def run_sequential(args, logger):
 
 def args_sanity_check(config, _log):
     # set CUDA flags
-    # config["use_cuda"] = True # Use cuda whenever possible!
+    config["use_cuda"] = True # Use cuda whenever possible!
     if config["use_cuda"] and not th.cuda.is_available():
         config["use_cuda"] = False
         _log.warning(

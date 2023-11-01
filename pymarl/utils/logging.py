@@ -22,7 +22,7 @@ class Logger:
     def setup_sacred(self, sacred_run_dict):
         self.sacred_info = sacred_run_dict.info
         self.use_sacred = True
-        print(sacred_run_dict.info)
+        # print(sacred_run_dict.info)
 
     def log_stat(self, key, value, t, to_sacred=True):
         self.stats[key].append((t, value))
