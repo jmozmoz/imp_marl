@@ -5,6 +5,7 @@ import torch
 
 from imp_env.owf_env import Struct_owf
 from imp_env.struct_env import Struct
+from imp_env.zayas_env import Zayas
 from imp_wrappers.pymarl_wrapper.MultiAgentEnv import MultiAgentEnv
 
 
@@ -18,6 +19,8 @@ class PymarlMAStruct(MultiAgentEnv):
     def __init__(self,
                  struct_type: str = "struct",
                  n_comp: int = 2,
+                 # Number of structure
+                 freq_col: list = [0, 0, 0, 0, 0],
                  custom_param: dict = None,
                  discount_reward: float = 1.,
                  state_obs: bool = True,
@@ -56,7 +59,11 @@ class PymarlMAStruct(MultiAgentEnv):
             seed: (int) seed for the random number generator
         """
         # Check struct type and default values
-        assert struct_type == "owf" or struct_type == "struct", "Error in struct_type"
+        assert (
+            struct_type == "owf" or
+            struct_type == "struct" or
+            struct_type == "zayas"
+            ), "Error in struct_type"
         if struct_type == "struct":
             self.k_comp = custom_param.get("k_comp", None) if (
                         custom_param is not None) else None
@@ -68,6 +75,9 @@ class PymarlMAStruct(MultiAgentEnv):
             obs_alphas = False
             env_correlation = False
             state_alphas = False
+        elif struct_type == "zayas":
+            self.freq_col = freq_col
+
 
         assert isinstance(state_obs, bool) \
                and isinstance(state_d_rate, bool) \
@@ -118,6 +128,13 @@ class PymarlMAStruct(MultiAgentEnv):
 
             self.struct_env = Struct_owf(self.config)
             self.n_agents = self.struct_env.n_agents
+        elif struct_type == "zayas":
+            self.config = {"n_comp": n_comp,
+                           "freq_col": freq_col,
+                           "discount_reward": discount_reward,
+                           "campaign_cost": campaign_cost}
+            self.struct_env = Zayas(self.config)
+            self.n_agents = self.struct_env.n_elem
 
         self.episode_limit = self.struct_env.ep_length
         self.agent_list = self.struct_env.agent_list

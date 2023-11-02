@@ -11,3 +11,4 @@ def env_fn(env, **kwargs) -> MultiAgentEnv:
 REGISTRY = {}
 REGISTRY["struct_marl"] = partial(env_fn, env=PymarlMAStruct)
 REGISTRY["struct_sarl"] = partial(env_fn, env=PymarlSAStruct)
+REGISTRY["zayas"] = partial(env_fn, env=PymarlMAStruct)
