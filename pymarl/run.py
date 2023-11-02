@@ -93,7 +93,7 @@ def run_sequential(args, logger):
         "reward": {"vshape": (1,)},
         "terminated": {"vshape": (1,), "dtype": th.uint8},
     }
-    # print(scheme)
+    logger.console_logger.info(scheme)
 
     if args.mac == "is_mac":
         scheme["behavior"] = {"vshape": (env_info["n_actions"],),
@@ -169,8 +169,8 @@ def run_sequential(args, logger):
 
     logger.console_logger.info(
         "Beginning training for {} timesteps".format(args.t_max))
-    # print("start")
-    # print("Number of trainable param=", learner.n_learnable_param())
+    logger.console_logger.info("start")
+    logger.console_logger.info("Number of trainable param=", learner.n_learnable_param())
     while runner.t_env <= args.t_max:
 
         # Run for a whole episode at a time
