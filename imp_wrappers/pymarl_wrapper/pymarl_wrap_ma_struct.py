@@ -78,7 +78,6 @@ class PymarlMAStruct(MultiAgentEnv):
         elif struct_type == "zayas":
             self.freq_col = freq_col
 
-
         assert isinstance(state_obs, bool) \
                and isinstance(state_d_rate, bool) \
                and isinstance(state_alphas, bool) \
