@@ -1,11 +1,13 @@
 from heuristics.heuristics_interval_owf import HeuristicsOwf
 from heuristics.heuristics_intervals_struct import HeuristicsStruct
+from heuristics.heuristics_intervals_zayas import HeuristicsZayas
 import timeit
+from functools import partial
 
 if __name__ == '__main__':
 
     search = False
-    env = "struct"  # "struct" or "owf"
+    env = "zayas"  # "struct" or "owf" or "zayas"
     eval_size = 1500
 
     if env == "struct":
@@ -21,6 +23,7 @@ if __name__ == '__main__':
                                      env_correlation=env_correlation,
                                      campaign_cost=campaign_cost,
                                      seed=seed_test)
+        eval_part = partial(heuristic.eval)
     elif env == "owf":
         n_owt = 2
         discount_reward = 0.95
@@ -32,6 +35,24 @@ if __name__ == '__main__':
                                   discount_reward=discount_reward,
                                   campaign_cost=False,
                                   seed=seed_test)
+        eval_part = partial(heuristic.eval)
+    elif env == "zayas":
+        n_comp = 22
+        freq_col = [1.e-2, 1.e-3, 5.e-4, 1.e-5, 1.e-6]
+        discount_reward = 0.95
+        seed_test = 0
+        eval_size = 2000
+
+        #### Evaluation
+        pf_brace_rep = 0.01
+
+        heuristic = HeuristicsZayas(n_comp=n_comp,
+                                    # Number of structure
+                                    freq_col=freq_col,
+                                    discount_reward=discount_reward,
+                                    campaign_cost=False,
+                                    seed=seed_test)
+        eval_part = partial(heuristic.eval, pf_sys_rep=pf_brace_rep)
     else:
         heuristic = None
 
@@ -45,4 +66,4 @@ if __name__ == '__main__':
         #### Evaluation
         insp_int = 10
         insp_comp = 5
-        heuristic.eval(eval_size, insp_int, insp_comp)
+        eval_part(eval_size, insp_int, insp_comp)
